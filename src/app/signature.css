@@ -14,7 +14,7 @@
 .hero-portrait {
   object-fit: cover;
   object-position: 51% 37%;
-  filter: grayscale(1) brightness(.79) contrast(1.12);
+  filter: grayscale(.82) brightness(.84) contrast(1.1);
   transform: translateY(var(--hero-portrait-shift, 0px)) scale(var(--hero-portrait-scale, 1));
   transform-origin: 58% 36%;
 }
@@ -173,6 +173,13 @@
 @media (max-width: 1050px) {
   .music-index .catalog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+@media (max-width: 900px) {
+  .music-stack { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); gap: 10px; }
+  .music-stack li:nth-child(n) { grid-column: auto; padding-bottom: 0; }
+  .music-stack li:first-child .release-card-caption,
+  .music-stack li:last-child .release-card-caption { margin-inline: 0; }
+  .music-stack .release-card-arrow { display: none; }
+}
 @media (max-width: 700px) {
   .hero { min-height: max(504px, calc(100svh - var(--dock-height))); }
   .hero-media { inset: 0 0 42px; border: 0; }
@@ -218,7 +225,6 @@
   .music-masthead .page-heading h1 { font-size: clamp(43px, 12.8vw, 85px); }
   .music-masthead .page-heading { margin-bottom: 1px; }
   .music-stack .release-card-title { font-size: 13px; }
-  .music-stack .release-card-arrow { display: none; }
   .music-stack .release-card-caption { padding-inline: 0; }
   .music-index .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

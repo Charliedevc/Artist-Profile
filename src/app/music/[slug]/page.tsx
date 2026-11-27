@@ -10,7 +10,8 @@ import { StreamingLinks } from "@/features/releases/release-card";
 import { releaseTheme } from "@/features/releases/release-theme";
 import { playerRelease } from "@/features/releases/player-release";
 import { ArtworkReveal } from "@/features/releases/artwork-reveal";
-import { approvedSocialArtwork, releaseDescription, releaseJsonLd } from "@/features/releases/release-metadata";
+import { releaseDescription, releaseJsonLd } from "@/features/releases/release-metadata";
+import { pageMetadata } from "../../site-metadata";
 
 type Props = { params: Promise<{ slug: string }> };
 export const dynamicParams = false;
@@ -27,26 +28,20 @@ async function findRelease(params: Props["params"]) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const release = await findRelease(params);
-  const description = releaseDescription(release);
-  const artwork = approvedSocialArtwork(release);
-  return {
-    title: release.title,
-    description,
-    openGraph: {
-      title: `${release.title} | Narçi`,
-      description,
-      images: artwork ? [{ url: artwork, alt: `${release.title} cover artwork` }] : undefined,
-    },
-  };
+  return pageMetadata(`/music/${release.slug}`, release.title, releaseDescription(release), {
+    src: releaseArtwork(release),
+    alt: `${release.title} cover artwork`,
+  });
 }
 
 export default async function ReleasePage({ params }: Props) {
   const release = await findRelease(params);
   const hasPreview = publicPreviews.some((preview) => preview.releaseSlug === release.slug);
 
-  return <div className="release-page" style={releaseTheme(release)}>
+  return <div className="release-page" data-era={release.slug}
+    data-layout={release.listedYear <= 2023 ? "reverse" : undefined} style={releaseTheme(release)}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: releaseJsonLd(release) }} />
-    <SiteHeader />
+    <SiteHeader release={release} />
     <main id="main">
       <section className="album-stage grain">
         <div className="page-width">
@@ -55,7 +50,7 @@ export default async function ReleasePage({ params }: Props) {
             <div className="album-copy">
               <p className="eyebrow era-label">Narçi / <time dateTime={release.releaseDate}>{releaseDate(release)}</time></p>
               <h1 className={release.title.length > 13 ? "long-title" : undefined}>{release.title}</h1>
-              <ListenButton release={playerRelease(release)} label={hasPreview ? "Preview listening room" : "Open listening room"} />
+              <ListenButton release={playerRelease(release)} label={hasPreview ? "Preview listening room" : "Where to listen"} />
               <StreamingLinks release={release} />
             </div>
             <ArtworkReveal>

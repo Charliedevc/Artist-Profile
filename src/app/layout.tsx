@@ -6,11 +6,13 @@ import { featuredRelease, publicPreviews } from "@/content/signature";
 import { PlayerProvider } from "@/features/player/player-provider";
 import { ListeningRoom, PlayerDock } from "@/features/player/player-ui";
 import { playerRelease } from "@/features/releases/player-release";
+import { pageMetadata } from "./site-metadata";
 import "./globals.css";
+import "./after-hours.css";
 
 export const metadata: Metadata = {
+  ...pageMetadata("/"),
   title: { default: artist.name, template: `%s | ${artist.name}` },
-  description: "Narçi’s official artist website. Dark R&B and New Jazz, releases, visuals and artist updates.",
 };
 
 const queue = publicPreviews.flatMap((preview) => {

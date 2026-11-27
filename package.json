@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "test": "tsc --skipLibCheck --strict --module commonjs --target es2020 --outDir .npm-cache/test-output src/features/player/playback-queue.ts && node --test tests/playback-queue.test.mjs",
-    "lint": "eslint .",
+    "lint": "eslint src tests review/upgrade/check-browser.mjs *.config.*",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

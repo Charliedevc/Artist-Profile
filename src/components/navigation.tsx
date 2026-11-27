@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import { artist } from "@/content/artist";
 
 const links = [
@@ -11,7 +12,7 @@ const links = [
   { href: "/about", label: "About" },
 ];
 
-export function Navigation() {
+export function Navigation({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   return <nav aria-label="Main navigation">
     {links.map(({ href, label }) => {
@@ -20,5 +21,6 @@ export function Navigation() {
         aria-current={active ? (pathname === href ? "page" : "location") : undefined}>{label}</Link>;
     })}
     <a href={artist.subscription.signupUrl}>Subscribe</a>
+    {children}
   </nav>;
 }

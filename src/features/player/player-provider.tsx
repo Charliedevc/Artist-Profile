@@ -3,6 +3,7 @@
 import { Howl } from "howler";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { PublicPreview } from "@/content/signature";
+import type { Release } from "@/content/music-types";
 import { advanceOrder, moveBack, nextRepeatMode, reorderUpcoming, startOrder, type PlaybackOrder, type RepeatMode } from "./playback-queue";
 
 export interface PlayerRelease {
@@ -10,6 +11,7 @@ export interface PlayerRelease {
   title: string;
   artwork: string;
   href: string;
+  streamingLinks: Release["streamingLinks"];
 }
 
 export interface QueueTrack extends PublicPreview {

@@ -1,33 +1,27 @@
-import type { Metadata } from "next";
-import { PageHeading, SiteFooter, SiteHeader } from "@/components/site-shell";
+import { ArrowDown } from "lucide-react";
+import { pageMetadata } from "../site-metadata";
+import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import { releases } from "@/content/releases";
-import { Discography } from "@/features/releases/discography";
 import { featuredRelease } from "@/content/signature";
-import { releaseTheme } from "@/features/releases/release-theme";
-import { ReleaseCard } from "@/features/releases/release-card";
+import { Discography } from "@/features/releases/discography";
+import { RecordReel } from "@/features/releases/record-reel";
 
-export const metadata: Metadata = { title: "Discography" };
+export const metadata = pageMetadata("/music", "Discography", "Browse Narçi’s releases by title and year, and find streaming links for each record.");
 
 export default function MusicPage() {
-  const center = featuredRelease ?? releases[0];
-  const [left, right] = ["at-jade", "u-played-me-acapella", "prom-night"]
-    .map((slug) => releases.find((release) => release.slug === slug && release !== center))
-    .filter((release) => release !== undefined);
-  const selection = [left, center, right].filter((release) => release !== undefined);
-
+  const opening = [featuredRelease?.slug, "prom-night", "save-the-bees"]
+    .flatMap(slug => releases.filter(release => release.slug === slug));
+  const reel = [...new Set([...opening, ...releases])];
   return <>
     <SiteHeader />
-    <main id="main" className="page-width interior music-index">
-      <section className="music-masthead" style={releaseTheme(featuredRelease)} aria-label="Discography and selected releases">
-        <div className="music-masthead-copy">
-          <PageHeading label={`${releases.length} releases / UnitedMasters catalog`} title="Discography" />
-          <a className="text-link archive-jump" href="#release-archive">Browse all releases <span aria-hidden="true">↓</span></a>
-        </div>
-        <ul className="music-stack" aria-label="Selected releases">
-          {selection.map((release) => <li key={release.slug}><ReleaseCard release={release} gallery /></li>)}
-        </ul>
-      </section>
-      <section id="release-archive" aria-label="Full release catalog" tabIndex={-1}>
+    <main id="main" className="page-width interior archive-page">
+      <header className="night-heading">
+        <h1>Discography</h1>
+        <a className="night-link" href="#release-archive">Search all {releases.length} releases <ArrowDown size={18} aria-hidden="true" /></a>
+      </header>
+      <RecordReel releases={reel} />
+      <section id="release-archive" className="night-section" aria-labelledby="catalog-title" tabIndex={-1}>
+        <div className="night-section-head"><h2 id="catalog-title">Full catalog</h2></div>
         <Discography releases={releases} />
       </section>
     </main>

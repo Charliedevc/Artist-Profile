@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { Maximize, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward, Volume2, X } from "lucide-react";
+import { Headphones, Maximize, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward, Volume2, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type WaveSurfer from "wavesurfer.js";
+import { StreamingLinks } from "@/features/releases/release-card";
 import { usePlayer, type PlayerRelease } from "./player-provider";
 
 const time = (seconds: number) =>
@@ -14,7 +15,7 @@ const time = (seconds: number) =>
 export function ListenButton({ release, label }: { release: PlayerRelease; label: string }) {
   const { openRoom } = usePlayer();
   return <button className="solid-button" onClick={(event) => openRoom(event.currentTarget, release)} type="button" aria-haspopup="dialog">
-    <Play size={17} fill="currentColor" aria-hidden="true" /> {label}
+    <Headphones size={18} aria-hidden="true" /> {label}
   </button>;
 }
 
@@ -89,18 +90,25 @@ function Volume() {
 }
 
 export function PlayerDock() {
-  const { release, track, openRoom } = usePlayer();
-  return <aside className="player-dock" aria-label="Persistent music player">
+  const { release, track, playable, openRoom } = usePlayer();
+  if (!playable) return null;
+  return <aside className="player-dock" aria-label="Persistent music player"
+    data-preview="available">
     <button type="button" className="player-identity" onClick={(event) => openRoom(event.currentTarget)}
       aria-label="Open listening room" aria-haspopup="dialog">
       {release && <Image src={release.artwork} alt="" width={60} height={60} sizes="60px" />}
-      <span><strong>{track?.title ?? release?.title ?? "Listening room"}</strong><small>Narçi</small></span>
+      <span><strong>{track?.title ?? release?.title ?? "Listening room"}</strong>
+        <small>Narçi</small></span>
     </button>
-    <Transport />
-    <div className="dock-seek"><SeekControl /></div>
-    <div className="dock-volume"><Volume /></div>
-    <button className="icon-button" type="button" aria-label="Expand listening room" aria-haspopup="dialog"
-      onClick={(event) => openRoom(event.currentTarget)}><Maximize /></button>
+    {playable && <>
+      <Transport />
+      <div className="dock-seek"><SeekControl /></div>
+      <div className="dock-volume"><Volume /></div>
+    </>}
+    <button className="icon-button dock-open" type="button" aria-label="Expand listening room" aria-haspopup="dialog"
+      onClick={(event) => openRoom(event.currentTarget)}>
+      <Maximize aria-hidden="true" />
+    </button>
   </aside>;
 }
 
@@ -121,7 +129,7 @@ export function ListeningRoom() {
     if (!expanded && element?.open) element.close();
   }, [expanded]);
 
-  return <dialog className="listening-room" ref={dialog} aria-labelledby="listen-title" onClose={() => {
+  return <dialog className="listening-room" data-preview={player.playable ? "available" : "unavailable"} ref={dialog} aria-labelledby="listen-title" onClose={() => {
     player.closeRoom();
     player.restoreRoomFocus();
   }}>
@@ -139,11 +147,12 @@ export function ListeningRoom() {
         <div className="listening-copy">
           <h2 id="listen-title">{track?.title ?? release?.title ?? "Listening room"}</h2>
           <p>Narçi</p>
-          <SeekControl />
-          <div className="room-controls">
+          {player.playable && <SeekControl />}
+          {player.playable && <div className="room-controls">
             <Transport />
             <Volume />
-          </div>
+          </div>}
+          {!player.playable && release && <StreamingLinks release={release} />}
           {player.playable && <div className="queue-options">
             <button className="icon-button" type="button" aria-label={`Repeat mode: ${repeatLabel}`}
               data-active={player.repeat !== "off"}

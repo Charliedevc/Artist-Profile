@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { artist } from "@/content/artist";
+import { featuredRelease } from "@/content/signature";
+import type { Release } from "@/content/music-types";
+import { ListenButton } from "@/features/player/player-ui";
+import { playerRelease } from "@/features/releases/player-release";
 import { Navigation } from "./navigation";
 
-export function SiteHeader() {
+export function SiteHeader({ release = featuredRelease }: { release?: Release }) {
   return <header className="site-header page-width">
     <Link href="/" className="wordmark" aria-label="Narçi home">{artist.name}</Link>
-    <Navigation />
+    <Navigation>{release && <ListenButton release={playerRelease(release)} label="Listen" />}</Navigation>
   </header>;
 }
 
